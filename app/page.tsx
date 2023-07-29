@@ -1,113 +1,104 @@
-import Image from 'next/image'
+"use client";
+import {
+  IconBookUpload,
+  IconCirclePlus,
+  IconEye,
+  IconEyeClosed,
+} from "@tabler/icons-react";
+import { useCallback, useState } from "react";
+import { twMerge } from "tailwind-merge";
 
-export default function Home() {
+interface Book {
+  id: number;
+  url: string;
+}
+
+const BASE_BOOK: Book = {
+  id: 0,
+  url: "",
+};
+
+export default function Page() {
+  const [url, setUrl] = useState<string>("");
+  const [books, setBooks] = useState<Book[]>([]);
+  const [selectedBook, setSelectedBook] = useState<number>(0);
+  const [hide, setHide] = useState<boolean>(false);
+
+  const handleNewBook = useCallback(() => {
+    setBooks([
+      ...books,
+      {
+        ...BASE_BOOK,
+        id: books.length + 1,
+      },
+    ]);
+  }, [books]);
+
+  const setBookImage = useCallback(() => {
+    if (!selectedBook) {
+      return;
+    }
+    setBooks(
+      books?.map((book) => (book.id === selectedBook ? { ...book, url } : book))
+    );
+    setUrl("");
+  }, [url, selectedBook, books]);
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+    <div className="p-4">
+      <div className="flex flex-col md:flex-row">
+        <div
+          onClick={() => setHide(!hide)}
+          className="md:mr-2 cursor-pointer mt-2 md:mt-0 flex-shrink-0 justify-center bg-gray-800 items-center flex p-2 rounded-lg hover:bg-gray-700 active:bg-gray-900"
+        >
+          {!hide ? (
+            <IconEye className="flex-shrink-0" />
+          ) : (
+            <IconEyeClosed className="flex-shrink-0" />
+          )}
         </div>
+        {!hide && (
+          <>
+            <input
+              placeholder="Book Image Url"
+              className="mt-2 md:mt-0 mr-2 w-full bg-gray-900 p-2 rounded-lg focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
+            />
+            <div
+              onClick={setBookImage}
+              className="cursor-pointer mt-2 md:mt-0 flex-shrink-0 justify-center bg-gray-800 items-center flex p-2 rounded-lg hover:bg-gray-700 active:bg-gray-900"
+            >
+              <IconBookUpload className="flex-shrink-0" />
+              <span className="flex-shrink-0">Set Image</span>
+            </div>
+          </>
+        )}
       </div>
-
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
+      <div className="flex mt-2 auto-cols-auto flex-wrap gap-2">
+        {books?.map((book: Book) => (
+          // eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text
+          <img
+            key={`book-id-${book.id}`}
+            className={twMerge(
+              "cursor-pointer grid place-items-center border rounded-md border-gray-500 text-gray-500 h-[4cm] w-[2.5cm] hover:border-white hover:text-white",
+              !hide &&
+                book.id === selectedBook &&
+                "shadow-md border-solid shadow-cyan-500/50 border-sky-500 text-sky-500 hover:border-sky-500 hover:text-sky-500"
+            )}
+            src={book.url}
+            onClick={() => setSelectedBook(book?.id)}
+          />
+        ))}
+        {!hide && (
+          <div
+            onClick={handleNewBook}
+            className="cursor-pointer grid place-items-center border rounded-md border-dashed border-gray-500 text-gray-500 h-[4cm] w-[2.5cm] hover:border-white hover:text-white"
+          >
+            <IconCirclePlus className="h-10 w-10" />
+          </div>
+        )}
       </div>
-
-      <div className="mb-32 grid text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore the Next.js 13 playground.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
+    </div>
+  );
 }
