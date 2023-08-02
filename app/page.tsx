@@ -24,15 +24,18 @@ const BASE_BOOK: Book = {
   url: "",
 };
 
+const BASE_SIZE = {
+  width: "4.7",
+  height: "7.2",
+};
+
 export default function Page() {
   const [url, setUrl] = useState<string>("");
   const [size, setSize] = useState<Size>({
-    width: "2.5",
-    height: "4",
+    ...BASE_SIZE,
   });
   const [temporalSize, setTemporalSize] = useState<Size>({
-    width: "2.5",
-    height: "4",
+    ...BASE_SIZE,
   });
   const [books, setBooks] = useState<Book[]>([]);
   const [selectedBook, setSelectedBook] = useState<number>(0);
