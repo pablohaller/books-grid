@@ -25,7 +25,7 @@ const BASE_BOOK: Book = {
 };
 
 const BASE_SIZE = {
-  width: "4.7",
+  width: "4.5",
   height: "7.2",
 };
 
