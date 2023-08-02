@@ -127,7 +127,12 @@ export default function Page() {
           </>
         )}
       </div>
-      <div className="flex mt-2 auto-cols-auto flex-wrap gap-2">
+      <div
+        className={twMerge(
+          "flex mt-2 auto-cols-auto flex-wrap gap-2",
+          hide && "gap-1"
+        )}
+      >
         {books?.map((book: Book) => (
           // eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text
           <img
@@ -136,7 +141,8 @@ export default function Page() {
               "cursor-pointer grid place-items-center border rounded-md border-gray-500 text-gray-500 hover:border-white hover:text-white",
               !hide &&
                 book.id === selectedBook &&
-                "shadow-md border-solid shadow-cyan-500/50 border-sky-500 text-sky-500 hover:border-sky-500 hover:text-sky-500"
+                "shadow-md border-solid shadow-cyan-500/50 border-sky-500 text-sky-500 hover:border-sky-500 hover:text-sky-500",
+              hide && "rounded-none border-none"
             )}
             style={{ width: `${size.width}cm`, height: `${size.height}cm` }}
             src={book.url}
